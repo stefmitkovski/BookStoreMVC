@@ -12,6 +12,6 @@ namespace BookStoreMVC.Models
         [Display(Name = "Genre Name")]
         public string GenreName { get; set; }
 
-        ICollection<BookGenre> bookGenres { get; set; }
+        public ICollection<BookGenre>? bookGenres { get; set; }
     }
 }

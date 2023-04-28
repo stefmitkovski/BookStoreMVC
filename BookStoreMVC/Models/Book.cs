@@ -36,6 +36,6 @@ namespace BookStoreMVC.Models
 
         public ICollection<Review>? Reviews { get; set; }
         public ICollection<UserBooks>? Users { get; set; }
-        public ICollection<BookGenre>? BookGenre { get; set;}
+        public ICollection<BookGenre>? BookGenres { get; set;}
     }
 }
