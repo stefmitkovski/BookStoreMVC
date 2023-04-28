@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using BookStoreMVC.Data;
+using MVCMovie.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<BookStoreMVCContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BookStoreMVCContext") ?? throw new InvalidOperationException("Connection string 'BookStoreMVCContext' not found.")));
@@ -9,6 +11,12 @@ builder.Services.AddDbContext<BookStoreMVCContext>(options =>
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    SeedData.Initialize(services);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

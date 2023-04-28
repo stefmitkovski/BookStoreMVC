@@ -29,7 +29,6 @@ namespace BookStoreMVC.Models
         public string? DownloadUrl { get; set; }
 
         [Display(Name = "Author")]
-
         [Required]
         public int AuthorId { get; set; }
         public Author Author { get; set; }

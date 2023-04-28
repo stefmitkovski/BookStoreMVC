@@ -48,7 +48,7 @@ namespace BookStoreMVC.Controllers
         // GET: Books/Create
         public IActionResult Create()
         {
-            ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FirstName");
+            ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FullName");
             return View();
         }
 
@@ -65,7 +65,7 @@ namespace BookStoreMVC.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FirstName", book.AuthorId);
+            ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FullName", book.AuthorId);
             return View(book);
         }
 
@@ -82,7 +82,7 @@ namespace BookStoreMVC.Controllers
             {
                 return NotFound();
             }
-            ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FirstName", book.AuthorId);
+            ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FullName", book.AuthorId);
             return View(book);
         }
 
@@ -118,7 +118,7 @@ namespace BookStoreMVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FirstName", book.AuthorId);
+            ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FullName", book.AuthorId);
             return View(book);
         }
 

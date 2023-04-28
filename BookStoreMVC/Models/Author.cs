@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookStoreMVC.Models
 {
@@ -28,6 +29,8 @@ namespace BookStoreMVC.Models
         [StringLength(50)]
         public string? Gender { get; set; }
 
+        [NotMapped]
+        public string FullName { get { return String.Format("{0} {1}", FirstName, LastName); } }
         public ICollection<Book>? Books { get; set;}
 
     }
