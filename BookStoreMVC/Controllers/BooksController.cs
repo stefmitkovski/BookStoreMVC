@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using BookStoreMVC.Data;
+using BookStoreMVC.Models;
+using BookStoreMVC.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using BookStoreMVC.Data;
-using BookStoreMVC.Models;
 
 namespace BookStoreMVC.Controllers
 {
@@ -20,10 +17,30 @@ namespace BookStoreMVC.Controllers
         }
 
         // GET: Books
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, string BookGenre)
         {
-            var bookStoreMVCContext = _context.Book.Include(b => b.Author);
-            return View(await bookStoreMVCContext.ToListAsync());
+            IQueryable<BookGenre> books = _context.bookGenres.AsQueryable();
+            IQueryable<string> genreQuery = _context.Genre.Distinct().Select(g => g.GenreName).Distinct();
+        
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                books = books.Where(s => s.Book.Title.Contains(searchString));
+            }
+
+            if (!string.IsNullOrEmpty(BookGenre))
+            {
+                books = books.Where(s => s.Genre.GenreName == BookGenre);
+            }
+
+            books = books.Include(b => b.Book);
+
+            var bookGenreVM = new BookGenreViewModel
+            {
+                Genre = new SelectList(await genreQuery.ToListAsync()),
+                Books = await books.Select(s => s.Book).Distinct().ToListAsync()
+            };
+
+            return View(bookGenreVM);
         }
 
         // GET: Books/Details/5
