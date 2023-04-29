@@ -44,6 +44,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Books[0].Author)
             </th>
+            <th>
+                Average Rating
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -66,10 +69,33 @@
                 @Html.DisplayFor(modelItem => item.FrontPage)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DownloadUrl)
+                <a href=@Html.DisplayFor(modelItem => item.DownloadUrl)>Download</a>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Author.FullName)
+            </td>
+            <td>
+                @if (Model.Reviews.Any())
+                    {
+                        var review_total = 0;
+                        var count = 0;
+                        @foreach (var review in Model.Reviews)
+                        {
+                            if (review.BookId == item.Id && review.Rating != null)
+                            {
+                                count++;
+                                review_total += (int)review.Rating;
+
+                            }
+                        }
+                        if(review_total != 0 && count != 0)
+                            {
+                                review_total = review_total / count;
+                            }
+                        <p>@review_total</p>
+                }else{
+                    <p>No Rating</p>
+                }
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

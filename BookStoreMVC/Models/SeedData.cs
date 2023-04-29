@@ -66,7 +66,7 @@ namespace MVCMovie.Models
                     new Book
                     {
                         //Id = 4,
-                        Title = "Frankenstain",
+                        Title = "Frankenstein",
                         YearPublished = 1860,
                         NumPages = 280,
                         Description = "\"Frankenstein\" is a gothic novel written by Mary Shelley in 1818, which tells the story of a young scientist named Victor Frankenstein who creates a monstrous creature in his laboratory, but soon realizes that his creation may be more dangerous than he ever imagined.",
@@ -382,7 +382,171 @@ namespace MVCMovie.Models
 
                 context.SaveChanges();
 
+                context.Review.AddRange(
+                    new Review
+                    {
+                        BookId = 1,
+                        AppUser = "Bob",
+                        Rating = 9,
+                        Comment = "The descriptions in this book were so vivid that I felt like I was right there in the story."
+                    },
+                    new Review
+                    {
+                        BookId = 1,
+                        AppUser = "Alice",
+                        Rating = 8,
+                        Comment = "The writing style was beautiful and the author really captured the essence"
+                    },
+                    new Review
+                    {
+                        BookId = 1,
+                        AppUser = "John",
+                        Rating = 7,
+                        Comment = "I found the characters to be relatable and their struggles felt very real"
+                    },
+                    new Review
+                    {
+                        BookId = 2,
+                        AppUser = "John",
+                        Rating = 10,
+                        Comment = "This book was a real emotional rollercoaster. I laughed, I cried, and I couldn't put it down."
+                    },
+                    new Review
+                    {
+                        BookId = 2,
+                        AppUser = "Stefan",
+                        Rating = 9,
+                        Comment = "The author's writing style was engaging and kept me hooked from beginning to end"
+                    },
+                    new Review
+                    {
+                        BookId = 2,
+                        AppUser = "Trey",
+                        Rating = 9,
+                        Comment = "The world-building in this book was fantastic and really drew me in"
+                    },
+                    new Review
+                    {
+                        BookId = 3,
+                        AppUser = "Alice",
+                        Rating = 8,
+                        Comment = "While the ending wasn't quite what I was expecting, it was still satisfying and tied up all the loose ends"
+                    },
+                    new Review
+                    {
+                        BookId = 3,
+                        AppUser = "Anne",
+                        Rating = 7,
+                        Comment = "I really enjoyed the unique perspective the author brought"
+                    },
+                    new Review
+                    {
+                        BookId = 4,
+                        AppUser = "Bob",
+                        Rating = 5,
+                        Comment = "I didn't like the way this book ended. It felt rushed and unsatisfying"
+                    },
+                    new Review
+                    {
+                        BookId = 4,
+                        AppUser = "Trey",
+                        Rating = 7,
+                        Comment = "I would highly recommend this book to anyone."
+                    },
+                    new Review
+                    {
+                        BookId = 4,
+                        AppUser = "Stefan",
+                        Rating = 4,
+                        Comment = "This book was a disappointment. The plot was predictable and the characters felt flat."
+                    },
+                    new Review
+                    {
+                        BookId = 5,
+                        AppUser = "Bob",
+                        Rating = 9,
+                        Comment = "The author's writing style was engaging and kept me hooked from beginning to end."
+                    },
+                    new Review
+                    {
+                        BookId = 5,
+                        AppUser = "Alice",
+                        Rating = 4,
+                        Comment = "This book was a disappointment. The plot was predictable and the characters felt flat."
+                    },
+                    new Review
+                    {
+                        BookId = 6,
+                        AppUser = "Trey",
+                        Rating = 7,
+                        Comment = "I found the characters to be relatable and their struggles felt very real."
+                    },
+                    new Review
+                    {
+                        BookId = 6,
+                        AppUser = "Penny",
+                        Rating = 8,
+                        Comment = "The writing style was beautiful and the author really captured the essence."
+                    },
+                    new Review
+                    {
+                        BookId = 7,
+                        AppUser = "Anne",
+                        Rating = 9,
+                        Comment = "The author's writing style was engaging and kept me hooked from beginning to end."
+                    },
+                    new Review
+                    {
+                        BookId = 7,
+                        AppUser = "Penny",
+                        Rating = 7,
+                        Comment = "The world-building in this book was fantastic and really drew me in."
+                    },
+                    new Review
+                    {
+                        BookId = 8,
+                        AppUser = "Emily",
+                        Rating = 10,
+                        Comment = "Overall, this was a fantastic read and I can't wait to see what this author comes up with next."
+                    },
+                    new Review
+                    {
+                        BookId = 8,
+                        AppUser = "Stefan",
+                        Rating = 10,
+                        Comment = "I had a hard time getting into this book at first, but once I did, I really enjoyed it."
+                    },
+                    new Review
+                    {
+                        BookId = 9,
+                        AppUser = "Alice",
+                        Rating = 10,
+                        Comment = "I didn't like the way this book ended. It felt rushed and unsatisfying."
+                    },
+                    new Review
+                    {
+                        BookId = 9,
+                        AppUser = "Bob",
+                        Rating = 8,
+                        Comment = "The themes explored in this book were important and thought-provoking."
+                    },
+                    new Review
+                    {
+                        BookId = 10,
+                        AppUser = "Stefan",
+                        Rating = 8,
+                        Comment = "This book was a real page-turner. It kept me guessing until the very end."
+                    },
+                    new Review
+                    {
+                        BookId = 11,
+                        AppUser = "Emily",
+                        Rating = 10,
+                        Comment = "The pacing was perfect and the story flowed seamlessly from beginning to end."
+                    }
+                );
 
+                context.SaveChanges();
             }
         }
     }

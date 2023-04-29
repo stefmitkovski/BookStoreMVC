@@ -4,6 +4,7 @@ using BookStoreMVC.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace BookStoreMVC.Controllers
 {
@@ -21,7 +22,7 @@ namespace BookStoreMVC.Controllers
         {
             IQueryable<BookGenre> books = _context.bookGenres.AsQueryable();
             IQueryable<string> genreQuery = _context.Genre.Distinct().Select(g => g.GenreName).Distinct();
-        
+            
             if (!string.IsNullOrEmpty(searchString))
             {
                 books = books.Where(s => s.Book.Title.Contains(searchString));
@@ -32,13 +33,14 @@ namespace BookStoreMVC.Controllers
                 books = books.Where(s => s.Genre.GenreName == BookGenre);
             }
 
-            books = books.Include(b => b.Book);
+            books = books.Include(b => b.Book).ThenInclude(b => b.Author);
 
             var bookGenreVM = new BookGenreViewModel
             {
                 Genre = new SelectList(await genreQuery.ToListAsync()),
-                Books = await books.Select(s => s.Book).Distinct().ToListAsync()
-            };
+                Books = await books.Select(s => s.Book).Distinct().ToListAsync(),
+                Reviews = await _context.Review.ToListAsync()
+        };
 
             return View(bookGenreVM);
         }
