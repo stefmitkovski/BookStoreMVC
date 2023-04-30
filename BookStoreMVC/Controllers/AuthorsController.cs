@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BookStoreMVC.Data;
 using BookStoreMVC.Models;
+using BookStoreMVC.ViewModels;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace BookStoreMVC.Controllers
 {
@@ -20,11 +22,28 @@ namespace BookStoreMVC.Controllers
         }
 
         // GET: Authors
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string nationalityString, string SearchString)
         {
-              return _context.Author != null ? 
-                          View(await _context.Author.ToListAsync()) :
-                          Problem("Entity set 'BookStoreMVCContext.Author'  is null.");
+            IQueryable<Author> authors = _context.Author.AsQueryable();
+            IQueryable<string> nationalitiesQuery = _context.Author.Select(g => g.Nationality).Distinct();
+
+            if (!string.IsNullOrEmpty(SearchString))
+            {
+                authors = authors.Where(s => s.FirstName.Contains(SearchString) || s.LastName.Contains(SearchString));
+            }
+
+            if (!string.IsNullOrEmpty(nationalityString))
+            {
+                authors = authors.Where(s => s.Nationality == nationalityString);
+            }
+
+            var searchAuthorVM = new AuthorSearchViewModel
+            {
+                Nationalities = new SelectList(await nationalitiesQuery.ToListAsync()),
+                Authors = await authors.ToListAsync(),
+            };
+
+            return View(searchAuthorVM);
         }
 
         // GET: Authors/Details/5
