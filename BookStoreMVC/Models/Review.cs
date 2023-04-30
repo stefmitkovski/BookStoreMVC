@@ -10,7 +10,7 @@ namespace BookStoreMVC.Models
         [Required]
         [Display(Name = "Book")]
         public int BookId { get; set; }
-        public Book Book { get; set; }
+        public Book? Book { get; set; }
 
         [Required]
         [StringLength(450)]

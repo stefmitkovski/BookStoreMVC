@@ -31,7 +31,7 @@ namespace BookStoreMVC.Models
         [Display(Name = "Author")]
         [Required]
         public int AuthorId { get; set; }
-        public Author Author { get; set; }
+        public Author? Author { get; set; }
 
         public ICollection<Review>? Reviews { get; set; }
         public ICollection<UserBooks>? Users { get; set; }
