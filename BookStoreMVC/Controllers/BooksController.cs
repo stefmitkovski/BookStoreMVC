@@ -1,20 +1,26 @@
 ﻿using BookStoreMVC.Data;
 using BookStoreMVC.Models;
 using BookStoreMVC.ViewModels;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
+using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace BookStoreMVC.Controllers
 {
     public class BooksController : Controller
     {
         private readonly BookStoreMVCContext _context;
+        private readonly IHostingEnvironment webHostEnvironment;
 
-        public BooksController(BookStoreMVCContext context)
+        public BooksController(BookStoreMVCContext context, IHostingEnvironment hostEnvironment)
         {
             _context = context;
+            webHostEnvironment = hostEnvironment;
         }
 
         // GET: Books
@@ -72,7 +78,7 @@ namespace BookStoreMVC.Controllers
                 Book = new Book(),
                 GenreList = new MultiSelectList(_context.Genre.AsEnumerable().OrderBy(s => s.GenreName), "Id", "GenreName"),
                 SelectedGenres = Enumerable.Empty<int>()
-            };
+        };
             ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FullName");
             return View(viewModel);
         }
@@ -88,6 +94,8 @@ namespace BookStoreMVC.Controllers
             {
                 try
                 {
+                    string uniqueFileName = UploadedFile(viewModel);
+                    viewModel.Book.FrontPage = uniqueFileName;
                     _context.Add(viewModel.Book);
                     await _context.SaveChangesAsync();
                     if (viewModel.SelectedGenres != null)
@@ -222,6 +230,22 @@ namespace BookStoreMVC.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+        private string UploadedFile(CreateBookGenreViewModel model)
+        {
+            string uniqueFileName = null;
+
+            if (model.Image != null)
+            {
+                string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "images");
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(model.Image.FileName);
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    model.Image.CopyTo(fileStream);
+                }
+            }
+            return uniqueFileName;
         }
 
         private bool BookExists(int id)
