@@ -54,13 +54,11 @@ namespace BookStoreMVC.Controllers
                 return NotFound();
             }
 
-            var author = await _context.Author
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var author = await _context.Author.Include(s => s.Books).FirstOrDefaultAsync(m => m.Id == id);
             if (author == null)
             {
                 return NotFound();
             }
-
             return View(author);
         }
 
