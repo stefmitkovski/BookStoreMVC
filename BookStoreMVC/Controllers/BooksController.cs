@@ -109,100 +109,124 @@ namespace BookStoreMVC.Controllers
             return View(viewModel);
         }
 
-            // GET: Books/Edit/5
-            public async Task<IActionResult> Edit(int? id)
+        // GET: Books/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null || _context.Book == null)
             {
-                if (id == null || _context.Book == null)
-                {
-                    return NotFound();
-                }
-
-                var book = await _context.Book.FindAsync(id);
-                if (book == null)
-                {
-                    return NotFound();
-                }
-                ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FullName", book.AuthorId);
-                return View(book);
+                return NotFound();
             }
 
-            // POST: Books/Edit/5
-            // To protect from overposting attacks, enable the specific properties you want to bind to.
-            // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-            [HttpPost]
-            [ValidateAntiForgeryToken]
-            public async Task<IActionResult> Edit(int id, [Bind("Id,Title,NumPages,Description,Publisher,FrontPage,DownloadUrl,AuthorId")] Book book)
+            var book = _context.Book.Where(m => m.Id == id).Include(m => m.BookGenres).First();
+            if (book == null)
             {
-                if (id != book.Id)
-                {
-                    return NotFound();
-                }
+                return NotFound();
+            }
 
-                if (ModelState.IsValid)
+            CreateBookGenreViewModel viewModel = new CreateBookGenreViewModel
+            {
+                Book = book,
+                GenreList = new MultiSelectList(_context.Genre.AsEnumerable().OrderBy(s => s.GenreName), "Id", "GenreName"),
+                SelectedGenres = book.BookGenres.Select(s => s.GenreId)
+            };
+            ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FullName", book.AuthorId);
+            return View(viewModel);
+        }
+
+        // POST: Books/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, CreateBookGenreViewModel viewModel)
+        {
+            if (id != viewModel.Book.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
                 {
-                    try
+                    _context.Update(viewModel.Book);
+                    await _context.SaveChangesAsync();
+                    IEnumerable<int> newGenresList = viewModel.SelectedGenres;
+                    IEnumerable<int> prevGenresList = _context.bookGenres.Where(s => s.BookId == id).Select(s => s.GenreId);
+                    IQueryable<BookGenre> toBeRemoved = _context.bookGenres.Where(s => s.BookId == id);
+                    if (newGenresList != null)
                     {
-                        _context.Update(book);
-                        await _context.SaveChangesAsync();
+                        toBeRemoved = toBeRemoved.Where(s => !newGenresList.Contains(s.GenreId));
+                        foreach (int genreId in newGenresList)
+                        {
+                            if (!prevGenresList.Any(s => s == genreId))
+                            {
+                                _context.bookGenres.Add(new BookGenre { GenreId = genreId, BookId = id });
+                            }
+                        }
                     }
-                    catch (DbUpdateConcurrencyException)
+                    _context.bookGenres.RemoveRange(toBeRemoved);
+                    await _context.SaveChangesAsync();
+
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!BookExists(viewModel.Book.Id))
                     {
-                        if (!BookExists(book.Id))
-                        {
-                            return NotFound();
-                        }
-                        else
-                        {
-                            throw;
-                        }
+                        return NotFound();
                     }
-                    return RedirectToAction(nameof(Index));
+                    else
+                    {
+                        throw;
+                    }
                 }
-                ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FullName", book.AuthorId);
-                return View(book);
-            }
-
-            // GET: Books/Delete/5
-            public async Task<IActionResult> Delete(int? id)
-            {
-                if (id == null || _context.Book == null)
-                {
-                    return NotFound();
-                }
-
-                var book = await _context.Book
-                    .Include(b => b.Author)
-                    .FirstOrDefaultAsync(m => m.Id == id);
-                if (book == null)
-                {
-                    return NotFound();
-                }
-
-                return View(book);
-            }
-
-            // POST: Books/Delete/5
-            [HttpPost, ActionName("Delete")]
-            [ValidateAntiForgeryToken]
-            public async Task<IActionResult> DeleteConfirmed(int id)
-            {
-                if (_context.Book == null)
-                {
-                    return Problem("Entity set 'BookStoreMVCContext.Book'  is null.");
-                }
-                var book = await _context.Book.FindAsync(id);
-                if (book != null)
-                {
-                    _context.Book.Remove(book);
-                }
-
-                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FullName", viewModel.Book.AuthorId);
+            return View(viewModel);
+        }
 
-            private bool BookExists(int id)
+        // GET: Books/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null || _context.Book == null)
             {
-                return (_context.Book?.Any(e => e.Id == id)).GetValueOrDefault();
+                return NotFound();
             }
+
+            var book = await _context.Book
+                .Include(b => b.Author)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            return View(book);
+        }
+
+        // POST: Books/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            if (_context.Book == null)
+            {
+                return Problem("Entity set 'BookStoreMVCContext.Book'  is null.");
+            }
+            var book = await _context.Book.FindAsync(id);
+            if (book != null)
+            {
+                _context.Book.Remove(book);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool BookExists(int id)
+        {
+            return (_context.Book?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
+}
