@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Book.Id" />
             <div class="form-group">
@@ -34,9 +34,12 @@
                 <span asp-validation-for="Book.Publisher" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Book.FrontPage" class="control-label"></label>
-                <input asp-for="Book.FrontPage" class="form-control" />
-                <span asp-validation-for="Book.FrontPage" class="text-danger"></span>
+                <label asp-for="Image" class="control-label"></label>
+                <div class="custom-file">
+                    <input asp-for="Image" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Choose file</label>
+                </div>
+                <span asp-validation-for="Image" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Book.DownloadUrl" class="control-label"></label>
@@ -53,6 +56,7 @@
                 <select asp-for="SelectedGenres" class="form-control js-example-basic-multiple" asp-items="Model.GenreList"> </select>
                 <span asp-validation-for="SelectedGenres" class="text-danger"></span>
             </div>
+            <input asp-for="Book.FrontPage" type="hidden"/>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -69,6 +73,10 @@
     <script>
         $(document).ready(function () {
             $("#SelectedGenres").select2();
+            $(".custom-file-input").on("change", function () {
+                var fileName = $(this).val().split("\\").pop();
+                $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+            });
         });
     </script>
 }

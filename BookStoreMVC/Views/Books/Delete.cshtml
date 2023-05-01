@@ -39,19 +39,19 @@
             @Html.DisplayNameFor(model => model.FrontPage)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FrontPage)
+            <img src="~/images/@Html.DisplayFor(model => model.FrontPage)" height="500px" width="300px" />
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.DownloadUrl)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DownloadUrl)
+            <a href="@Html.DisplayFor(model => model.DownloadUrl)">Download</a>
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Author)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Author.FirstName)
+            @Html.DisplayFor(model => model.Author.FullName)
         </dd>
     </dl>
     

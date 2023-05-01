@@ -1,13 +1,10 @@
 ﻿using BookStoreMVC.Data;
 using BookStoreMVC.Models;
 using BookStoreMVC.ViewModels;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
-using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace BookStoreMVC.Controllers
@@ -78,7 +75,7 @@ namespace BookStoreMVC.Controllers
                 Book = new Book(),
                 GenreList = new MultiSelectList(_context.Genre.AsEnumerable().OrderBy(s => s.GenreName), "Id", "GenreName"),
                 SelectedGenres = Enumerable.Empty<int>()
-        };
+            };
             ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FullName");
             return View(viewModel);
         }
@@ -94,8 +91,11 @@ namespace BookStoreMVC.Controllers
             {
                 try
                 {
-                    string uniqueFileName = UploadedFile(viewModel);
-                    viewModel.Book.FrontPage = uniqueFileName;
+                    if (viewModel.Image != null)
+                    {
+                        string uniqueFileName = UploadedFile(viewModel);
+                        viewModel.Book.FrontPage = uniqueFileName;
+                    }
                     _context.Add(viewModel.Book);
                     await _context.SaveChangesAsync();
                     if (viewModel.SelectedGenres != null)
@@ -157,6 +157,11 @@ namespace BookStoreMVC.Controllers
             {
                 try
                 {
+                    if (viewModel.Image != null)
+                    {
+                        string uniqueFileName = UploadedFile(viewModel);
+                        viewModel.Book.FrontPage = uniqueFileName;
+                    }
                     _context.Update(viewModel.Book);
                     await _context.SaveChangesAsync();
                     IEnumerable<int> newGenresList = viewModel.SelectedGenres;

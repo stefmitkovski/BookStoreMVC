@@ -42,6 +42,7 @@ namespace MVCMovie.Models
                         NumPages = 1225,
                         Description = "Leo Tolstoy's \"War and Peace\" is a novel that depicts the lives of Russian aristocrats during the Napoleonic Wars, exploring themes such as love, family, war, and the search for meaning in life.",
                         Publisher = "The Russian Messanger",
+                        FrontPage = "WarAndPeace.jpg",
                         AuthorId = 1
                     },
                     new Book{
@@ -51,6 +52,7 @@ namespace MVCMovie.Models
                         NumPages = 820,
                         Description = "\"The Castle\" by Franz Kafka is a novel that follows a land surveyor named K. who is summoned to a village by authorities who work in a mysterious castle. Despite his efforts, K. struggles to gain access to the castle and faces obstacles from the villagers who seem to be controlled by the castle's unseen authority. The novel explores themes of bureaucracy, alienation, and the search for meaning in a seemingly incomprehensible world.",
                         Publisher = "Kurt Wolff",
+                        FrontPage = "TheCastle.jpg",
                         AuthorId = 6
                     },
                     new Book
@@ -61,6 +63,7 @@ namespace MVCMovie.Models
                         NumPages = 320,
                         Description = "\"The Trial\" is a novel by Franz Kafka about a man named Josef K. who is arrested and put on trial for a crime he is never informed of, and the surreal and absurd experiences he has as he tries to understand and navigate the mysterious and oppressive legal system.",
                         Publisher = "Kurt Wolff",
+                        FrontPage = "TrialKafka.jpg",
                         AuthorId = 6
                     },
                     new Book
@@ -71,6 +74,7 @@ namespace MVCMovie.Models
                         NumPages = 280,
                         Description = "\"Frankenstein\" is a gothic novel written by Mary Shelley in 1818, which tells the story of a young scientist named Victor Frankenstein who creates a monstrous creature in his laboratory, but soon realizes that his creation may be more dangerous than he ever imagined.",
                         Publisher = "Lackington",
+                        FrontPage = "Frankenstein.jpg",
                         AuthorId = 5
                     },
                     new Book
@@ -81,6 +85,7 @@ namespace MVCMovie.Models
                         NumPages = 1280,
                         Description = "\"The Lord of the Rings\" is a high-fantasy novel by J.R.R. Tolkien that follows hobbit Frodo Baggins as he embarks on a perilous journey to destroy a powerful ring that could bring about the end of Middle-earth, while facing various dangers and encountering memorable characters along the way.",
                         Publisher = "Allen & Unwin",
+                        FrontPage = "LordOfTheRings.jpg",
                         AuthorId = 8
                     },
                     new Book
@@ -91,6 +96,7 @@ namespace MVCMovie.Models
                         NumPages = 223,
                         Description = "\"Harry Potter and the Philosopher's Stone\" is a fantasy novel written by J.K. Rowling. It follows the story of an orphaned boy named Harry Potter who discovers he is a wizard and is invited to attend Hogwarts School of Witchcraft and Wizardry. Along with his new friends Ron and Hermione, Harry sets out to unravel the mystery of the Philosopher's Stone, a powerful object that could grant immortality to its owner, while also facing the threat of the evil wizard, Lord Voldemort.",
                         Publisher = "Bloomsbury",
+                        FrontPage = "Harry_Potter_and_the_Philosopher's_Stone.jpg",
                         AuthorId = 9
                     },
                     new Book
@@ -101,6 +107,7 @@ namespace MVCMovie.Models
                         NumPages = 318,
                         Description = "\"The Bridge on the Drina\" is a historical fiction novel written by Yugoslav author Ivo Andrić. It chronicles the history of the town of Višegrad and its Ottoman-era bridge over the Drina River, examining the impact of war, politics, and social change on the community and the bridge itself over the course of four centuries.",
                         Publisher = "Prosveta",
+                        FrontPage = "TheBridgeInTheDrine.jpg",
                         AuthorId = 7
                     },
                     new Book
@@ -111,6 +118,7 @@ namespace MVCMovie.Models
                         NumPages = 550,
                         Description = "\"Crime and Punishment\" is a psychological novel written by Fyodor Dostoevsky, first published in 1866. It tells the story of a young impoverished ex-student, Rodion Raskolnikov, who plans and carries out the murder of a pawnbroker for her money. The novel explores themes of guilt, redemption, and the consequences of moral transgressions",
                         Publisher = "The Russian Messanger",
+                        FrontPage = "CrimeAndPunishment.jpg",
                         AuthorId = 4
                     },
                     new Book
@@ -121,6 +129,7 @@ namespace MVCMovie.Models
                         NumPages = 1221,
                         Description = "\"The Brothers Karamazov\" is a novel by Russian author Fyodor Dostoevsky, published in 1880. It tells the story of the Karamazov family and their dysfunctional relationships, particularly the three brothers Dmitry, Ivan, and Alexei. The novel explores themes of religion, morality, and human nature, and is considered one of the greatest works of world literature.",
                         Publisher = "The Russian Messanger",
+                        FrontPage = "TheBrothersKaramazov.jpg",
                         AuthorId = 4
                     },
                     new Book
@@ -131,6 +140,7 @@ namespace MVCMovie.Models
                         NumPages = 244,
                         Description = "\"The Bell Jar\" is a semi-autobiographical novel by Sylvia Plath that tells the story of a young woman named Esther Greenwood as she struggles with mental illness and societal expectations in the 1950s.",
                         Publisher = "Heinemann",
+                        FrontPage = "TheBellJar.jpg",
                         AuthorId = 3
                     },
                     new Book
@@ -141,6 +151,7 @@ namespace MVCMovie.Models
                         NumPages = 160,
                         Description = "\"The Stranger\" is a philosophical novel written by Albert Camus in which the protagonist, Meursault, navigates life with a sense of detachment and indifference, culminating in a murder trial that challenges societal norms and beliefs.",
                         Publisher = "Gallimard",
+                        FrontPage = "TheStranger.jpg",
                         AuthorId = 2
                     }
                 );
