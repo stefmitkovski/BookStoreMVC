@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using BookStoreMVC.Models;
 using Microsoft.EntityFrameworkCore;
-using BookStoreMVC.Models;
 
 namespace BookStoreMVC.Data
 {
     public class BookStoreMVCContext : DbContext
     {
-        public BookStoreMVCContext (DbContextOptions<BookStoreMVCContext> options)
+        public BookStoreMVCContext(DbContextOptions<BookStoreMVCContext> options)
             : base(options)
         {
         }
@@ -21,7 +17,7 @@ namespace BookStoreMVC.Data
         public DbSet<BookStoreMVC.Models.Review>? Review { get; set; }
 
         public DbSet<BookStoreMVC.Models.Genre>? Genre { get; set; }
-    
+
         public DbSet<BookStoreMVC.Models.BookGenre>? bookGenres { get; set; }
 
         public DbSet<BookStoreMVC.Models.UserBooks>? userBooks { get; set; }

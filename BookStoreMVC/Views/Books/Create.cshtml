@@ -41,9 +41,12 @@
                 <span asp-validation-for="Image" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Book.DownloadUrl" class="control-label"></label>
-                <input asp-for="Book.DownloadUrl" class="form-control" />
-                <span asp-validation-for="Book.DownloadUrl" class="text-danger"></span>
+                <label asp-for="PDF" class="control-label"></label>
+                <div class="custom-file">
+                    <input asp-for="PDF" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Choose file</label>
+                </div>
+                <span asp-validation-for="PDF" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Book.AuthorId" class="control-label"></label>

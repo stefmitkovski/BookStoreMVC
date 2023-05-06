@@ -69,7 +69,7 @@
                     <img src="~/images/@Html.DisplayFor(modelItem => item.FrontPage)" height="500px" width="300px">
             </td>
             <td>
-                <a href=@Html.DisplayFor(modelItem => item.DownloadUrl)>Download</a>
+                <a href="~/pdfs/@Html.DisplayFor(modelItem => item.DownloadUrl)">Download</a>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Author.FullName)

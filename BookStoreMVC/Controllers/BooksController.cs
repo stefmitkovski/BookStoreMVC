@@ -89,28 +89,26 @@ namespace BookStoreMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
+                if (viewModel.Image != null)
                 {
-                    if (viewModel.Image != null)
-                    {
-                        string uniqueFileName = UploadedFile(viewModel);
-                        viewModel.Book.FrontPage = uniqueFileName;
-                    }
-                    _context.Add(viewModel.Book);
-                    await _context.SaveChangesAsync();
-                    if (viewModel.SelectedGenres != null)
-                    {
-                        foreach (int genreId in viewModel.SelectedGenres)
-                        {
-                            _context.bookGenres.Add(new BookGenre { BookId = viewModel.Book.Id, GenreId = genreId });
-                        }
-                    }
-                    await _context.SaveChangesAsync();
+                    string uniqueFileName = UploadedFile(viewModel);
+                    viewModel.Book.FrontPage = uniqueFileName;
                 }
-                catch (DbUpdateConcurrencyException)
+                if (viewModel.PDF != null)
                 {
-                    throw;
+                    string uniqueFileName = UploadedFile(viewModel);
+                    viewModel.Book.DownloadUrl = uniqueFileName;
                 }
+                _context.Add(viewModel.Book);
+                await _context.SaveChangesAsync();
+                if (viewModel.SelectedGenres != null)
+                {
+                    foreach (int genreId in viewModel.SelectedGenres)
+                    {
+                        _context.bookGenres.Add(new BookGenre { BookId = viewModel.Book.Id, GenreId = genreId });
+                    }
+                }
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FullName", viewModel.Book.AuthorId);
@@ -162,6 +160,11 @@ namespace BookStoreMVC.Controllers
                         string uniqueFileName = UploadedFile(viewModel);
                         viewModel.Book.FrontPage = uniqueFileName;
                     }
+                    if (viewModel.PDF != null)
+                    {
+                        string uniqueFileName = UploadedFile(viewModel);
+                        viewModel.Book.DownloadUrl = uniqueFileName;
+                    }
                     _context.Update(viewModel.Book);
                     await _context.SaveChangesAsync();
                     IEnumerable<int> newGenresList = viewModel.SelectedGenres;
@@ -180,7 +183,6 @@ namespace BookStoreMVC.Controllers
                     }
                     _context.bookGenres.RemoveRange(toBeRemoved);
                     await _context.SaveChangesAsync();
-
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -249,8 +251,21 @@ namespace BookStoreMVC.Controllers
                 {
                     model.Image.CopyTo(fileStream);
                 }
+                model.Image = null;
+                return uniqueFileName;
             }
-            return uniqueFileName;
+            else if (model.PDF != null)
+            {
+                string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "pdfs");
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(model.PDF.FileName);
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    model.PDF.CopyTo(fileStream);
+                }
+                return uniqueFileName;
+            }
+            return null;
         }
 
         private bool BookExists(int id)
