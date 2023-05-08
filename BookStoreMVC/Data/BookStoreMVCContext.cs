@@ -1,9 +1,11 @@
-﻿using BookStoreMVC.Models;
+﻿using BookStoreMVC.Areas.Identity.Data;
+using BookStoreMVC.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookStoreMVC.Data
 {
-    public class BookStoreMVCContext : DbContext
+    public class BookStoreMVCContext : IdentityDbContext<BookStoreMVCUser>
     {
         public BookStoreMVCContext(DbContextOptions<BookStoreMVCContext> options)
             : base(options)
@@ -24,6 +26,7 @@ namespace BookStoreMVC.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
             builder.Entity<BookGenre>()
                 .HasOne<Book>(g => g.Book)
                 .WithMany(g => g.BookGenres)

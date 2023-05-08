@@ -1,5 +1,7 @@
-﻿using BookStoreMVC.Data;
+﻿using BookStoreMVC.Areas.Identity.Data;
+using BookStoreMVC.Data;
 using BookStoreMVC.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Policy;
 
@@ -7,12 +9,37 @@ namespace MVCMovie.Models
 {
     public class SeedData
     {
+        public static async Task CreateUserRoles(IServiceProvider serviceProvider)
+        {
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<BookStoreMVCUser>>();
+            IdentityResult roleResult;
+            //Add Admin Role
+            var roleAdminCheck = await RoleManager.RoleExistsAsync("Admin");
+            if (!roleAdminCheck) { roleResult = await RoleManager.CreateAsync(new IdentityRole("Admin")); }
+            //Add User Role
+            var roleUserCheck = await RoleManager.RoleExistsAsync("User");
+            if (!roleUserCheck) { roleResult = await RoleManager.CreateAsync(new IdentityRole("User")); }
+
+            BookStoreMVCUser user = await UserManager.FindByEmailAsync("admin@books.com");
+            if (user == null)
+            {
+                var User = new BookStoreMVCUser();
+                User.Email = "admin@books.com";
+                User.UserName = "admin@books.com";
+                string userPWD = "Admin123";
+                IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
+                //Add default User to Role Admin      
+                if (chkUser.Succeeded) { var result1 = await UserManager.AddToRoleAsync(User, "Admin"); }
+            }
+        }
         public static void Initialize(IServiceProvider serviceProvider)
         {
             using (var context = new BookStoreMVCContext(
                 serviceProvider.GetRequiredService<
                     DbContextOptions<BookStoreMVCContext>>()))
             {
+                CreateUserRoles(serviceProvider).Wait();
                 // Look for any book.
                 if (context.Author.Any() || context.Book.Any() || context.bookGenres.Any() || context.Genre.Any() || context.Review.Any() || context.userBooks.Any())
                 {
