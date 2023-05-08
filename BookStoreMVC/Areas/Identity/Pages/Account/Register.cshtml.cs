@@ -26,18 +26,18 @@ namespace BookStoreMVC.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<BookStoreMVCUser> _signInManager;
         private readonly UserManager<BookStoreMVCUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IUserStore<BookStoreMVCUser> _userStore;
         private readonly IUserEmailStore<BookStoreMVCUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailSender _emailSender;
 
         public RegisterModel(
             UserManager<BookStoreMVCUser> userManager,
             IUserStore<BookStoreMVCUser> userStore,
             SignInManager<BookStoreMVCUser> signInManager,
-            RoleManager<IdentityRole> roleManager,
             ILogger<RegisterModel> logger,
+            RoleManager<IdentityRole> roleManager,
             IEmailSender emailSender)
         {
             _userManager = userManager;
@@ -124,12 +124,15 @@ namespace BookStoreMVC.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-                    var defaultrole = _roleManager.FindByIdAsync("User").Result;
+                    bool defaultrole = await _roleManager.RoleExistsAsync("User");
+                    IdentityResult roleresult;
                     _logger.LogInformation("User created a new account with password.");
-                    if (defaultrole != null)
+                    if (!defaultrole)
                     {
-                        IdentityResult roleresult = await _userManager.AddToRoleAsync(user, defaultrole.Name);
+                        roleresult = await _roleManager.CreateAsync(new IdentityRole("User"));
                     }
+                    var addRoleUser = await _userManager.AddToRoleAsync(user, "User");
+
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

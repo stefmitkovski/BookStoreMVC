@@ -6,10 +6,12 @@
 
 <h1>List of books</h1>
 
-<p>
-    <a asp-action="Create">Add a new book</a>
-</p>
-
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create">Add a new book</a>
+    </p>
+}
 <form asp-asp-controller="Books" asp-action="Index" method="get">
     <p>
         <select asp-for="BookGenre" asp-items="Model.Genre">
@@ -98,9 +100,19 @@
                 }
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a><p>|</p>
+                }
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+                {
+                    <a asp-action="Buy" asp-route-id="@item.Id">Buy</a><p>|</p>
+                }
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <p>|</p><a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                }
             </td>
         </tr>
 }

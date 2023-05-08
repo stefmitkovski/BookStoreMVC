@@ -1,10 +1,12 @@
 ﻿using BookStoreMVC.Data;
 using BookStoreMVC.Models;
 using BookStoreMVC.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace BookStoreMVC.Controllers
@@ -68,6 +70,7 @@ namespace BookStoreMVC.Controllers
         }
 
         // GET: Books/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             CreateBookGenreViewModel viewModel = new CreateBookGenreViewModel
@@ -85,6 +88,7 @@ namespace BookStoreMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(CreateBookGenreViewModel viewModel)
         {
             if (ModelState.IsValid)
@@ -116,6 +120,7 @@ namespace BookStoreMVC.Controllers
         }
 
         // GET: Books/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Book == null)
@@ -144,6 +149,7 @@ namespace BookStoreMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, CreateBookGenreViewModel viewModel)
         {
             if (id != viewModel.Book.Id)
@@ -202,6 +208,7 @@ namespace BookStoreMVC.Controllers
         }
 
         // GET: Books/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Book == null)
@@ -223,6 +230,7 @@ namespace BookStoreMVC.Controllers
         // POST: Books/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Book == null)
@@ -238,6 +246,8 @@ namespace BookStoreMVC.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        [Authorize(Roles = "Admin")]
         private string UploadedFile(CreateBookGenreViewModel model)
         {
             string uniqueFileName = null;
