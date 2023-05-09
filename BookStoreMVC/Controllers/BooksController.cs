@@ -54,6 +54,29 @@ namespace BookStoreMVC.Controllers
             return View(bookGenreVM);
         }
 
+        // GET: My Books
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> MyBooks(string searchString)
+        {
+            var usr = await _userManager.GetUserAsync(HttpContext.User);
+            IQueryable<UserBooks> books = _context.userBooks.AsQueryable().Where(s => s.AppUser == usr.Email);
+            IQueryable<string> genreQuery = _context.Genre.Distinct().Select(g => g.GenreName).Distinct();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                books = books.Where(s => s.Book.Title.Contains(searchString));
+            }
+
+            books = books.Include(b => b.Book).ThenInclude(b => b.Author);
+
+            var bookGenreVM = new BookGenreViewModel
+            {
+                Books = await books.Select(s => s.Book).Distinct().ToListAsync(),
+                Reviews = await _context.Review.ToListAsync()
+            };
+
+            return View(bookGenreVM);
+        }
+
         // GET: Books/Details/5
         public async Task<IActionResult> Details(int? id)
         {
