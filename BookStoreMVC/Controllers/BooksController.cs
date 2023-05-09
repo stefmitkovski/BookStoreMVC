@@ -103,6 +103,11 @@ namespace BookStoreMVC.Controllers
                 {
                     purchesed = "Yes";
                 }
+                ViewBag.Email = usr.Email;
+            }
+            else
+            {
+                ViewBag.Email = null;
             }
             // Get the reviews of this book
             var all_review = await _context.Review.Where(b => b.BookId == id).ToListAsync();
@@ -113,7 +118,6 @@ namespace BookStoreMVC.Controllers
                 Reviews = all_review,
                 Purchesed = purchesed
             };
-
             return View(bookDetailsVM);
         }
 
@@ -360,6 +364,26 @@ namespace BookStoreMVC.Controllers
             _context.userBooks.Add(new UserBooks { AppUser = usr.Email, BookId = id });
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> ReturnBook(int id)
+        {
+            var usr = await _userManager.GetUserAsync(HttpContext.User);
+            if (id == null)
+            {
+                return NotFound(ModelState);
+            }
+
+            var book = _context.userBooks.Where(s => s.BookId == id && s.AppUser == usr.Email).FirstOrDefault();
+            if (book == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            _context.userBooks.Remove(book);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(MyBooks));
         }
 
 

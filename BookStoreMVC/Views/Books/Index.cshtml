@@ -102,18 +102,18 @@
             <td>
                 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                 {
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a><p>|</p>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                 }
                     @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
                 {
                         <form method="post" asp-controller="Books" asp-action="Buy" asp-route-id="@item.Id">
-                            <button type="submit" class="btn btn-link">Buy</button>|
+                            <button type="submit" class="btn btn-link">Buy</button>
                         </form>
                 }
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a>
                 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                 {
-                    <p>|</p><a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                 }
             </td>
         </tr>

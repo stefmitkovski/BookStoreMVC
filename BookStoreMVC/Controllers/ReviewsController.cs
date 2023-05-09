@@ -92,20 +92,20 @@ namespace BookStoreMVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Create([Bind("Id,BookId,AppUser,Comment,Rating")] Review review)
+        public async Task<IActionResult> Create([Bind("BookId,AppUser,Comment,Rating")] Review review)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(review);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Create));
             }
             ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title", review.BookId);
             return View(review);
         }
 
         // GET: Reviews/Edit/5
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Review == null)
@@ -118,7 +118,8 @@ namespace BookStoreMVC.Controllers
             {
                 return NotFound();
             }
-            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title", review.BookId);
+            var book = _context.Review.Include(b => b.Book).Where(b => b.Id == id).Select(b => b.Book).ToList();
+            ViewData["BookId"] = new SelectList(book, "Id", "Title", review.BookId);
             return View(review);
         }
 
@@ -127,7 +128,7 @@ namespace BookStoreMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,BookId,AppUser,Comment,Rating")] Review review)
         {
             if (id != review.Id)
@@ -153,14 +154,14 @@ namespace BookStoreMVC.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Books");
             }
             ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title", review.BookId);
             return View(review);
         }
 
         // GET: Reviews/Delete/5
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Review == null)
@@ -182,7 +183,7 @@ namespace BookStoreMVC.Controllers
         // POST: Reviews/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Review == null)
@@ -196,7 +197,7 @@ namespace BookStoreMVC.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index","Books");
         }
 
         private bool ReviewExists(int id)

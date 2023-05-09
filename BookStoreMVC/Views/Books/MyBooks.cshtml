@@ -87,6 +87,13 @@
                         <p>No Rating</p>
                     }
                 </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+                    {
+                        <a asp-action="ReturnBook" asp-route-id="@item.Id">Return</a>
+                    }
+                </td>
             </tr>
         }
     </tbody>

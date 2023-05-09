@@ -67,7 +67,15 @@
             {
                 @foreach(var review in Model.Reviews)
                 {
-                    <p>@review.AppUser : @review.Comment Rating: @review.Rating </p>
+                    @if(review.AppUser == ViewBag.Email)
+                    {
+                        <p>@review.AppUser : @review.Comment Rating: @review.Rating 
+                        <a asp-controller="Reviews" asp-action="Edit" asp-route-id="@review.Id">Edit</a> |
+                        <a asp-controller="Reviews" asp-action="Delete" asp-route-id="@review.Id"> Delete</a>
+                        </p>
+                    }else{
+                        <p>@review.AppUser : @review.Comment Rating: @review.Rating </p>
+                    }
                 }
             }
         </dd>
@@ -76,11 +84,11 @@
 <div>
 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
 {
-    <a asp-action="Edit" asp-route-id="@Model?.Book.Id">Edit</a><p>|</p>
+    <p><a asp-action="Edit" asp-route-id="@Model?.Book.Id">Edit</a>|</p>
 }
 @if (Model.Purchesed == "Yes")
 {
-    <a asp-controller="Reviews" asp-action="Create" asp-route-id="@Model?.Book.Id">Add review</a><p>|</p>
+    <a asp-controller="Reviews" asp-action="Create" asp-route-id="@Model?.Book.Id">Add review</a> 
 }
-    <a asp-action="Index">Back to List</a>
+    | <a asp-action="Index">Back to List</a>
 </div>
