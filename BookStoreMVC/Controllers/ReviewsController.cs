@@ -1,25 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using BookStoreMVC.Areas.Identity.Data;
+using BookStoreMVC.Data;
+using BookStoreMVC.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using BookStoreMVC.Data;
-using BookStoreMVC.Models;
+using System.Data;
 
 namespace BookStoreMVC.Controllers
 {
     public class ReviewsController : Controller
     {
         private readonly BookStoreMVCContext _context;
+        private readonly UserManager<BookStoreMVCUser> _userManager;
 
-        public ReviewsController(BookStoreMVCContext context)
+        public ReviewsController(BookStoreMVCContext context, UserManager<BookStoreMVCUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Reviews
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var bookStoreMVCContext = _context.Review.Include(r => r.Book);
@@ -27,6 +30,7 @@ namespace BookStoreMVC.Controllers
         }
 
         // GET: Reviews/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Review == null)
@@ -46,9 +50,39 @@ namespace BookStoreMVC.Controllers
         }
 
         // GET: Reviews/Create
-        public IActionResult Create()
+        [Authorize]
+        public async Task<IActionResult> Create(int id)
         {
-            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title");
+            var usr = await _userManager.GetUserAsync(HttpContext.User);
+
+            // Keeping track of who is making the review
+            ViewData["User"] = usr.Email;
+            if (User.IsInRole("Admin"))
+            {
+                ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title");
+                return View();
+            }
+
+            // id must not be null if the user is logged in and is not the admin
+            if (id == null)
+            {
+                return NotFound("Error");
+            }
+
+            // The user has to own the book
+            var own = _context.userBooks.Where(s => s.BookId == id && s.AppUser == usr.Email).ToListAsync();
+            if (own == null)
+            {
+                return NotFound("Error");
+            }
+
+            // Return a list of only one item
+            var book = _context.Book.Where(b => b.Id == id);
+            if (book.FirstOrDefaultAsync() == null)
+            {
+                return NotFound("Error");
+            }
+            ViewData["BookId"] = new SelectList(book, "Id", "Title"); ;
             return View();
         }
 
@@ -57,6 +91,7 @@ namespace BookStoreMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("Id,BookId,AppUser,Comment,Rating")] Review review)
         {
             if (ModelState.IsValid)
@@ -70,6 +105,7 @@ namespace BookStoreMVC.Controllers
         }
 
         // GET: Reviews/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Review == null)
@@ -91,6 +127,7 @@ namespace BookStoreMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,BookId,AppUser,Comment,Rating")] Review review)
         {
             if (id != review.Id)
@@ -123,6 +160,7 @@ namespace BookStoreMVC.Controllers
         }
 
         // GET: Reviews/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Review == null)
@@ -144,6 +182,7 @@ namespace BookStoreMVC.Controllers
         // POST: Reviews/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Review == null)
@@ -155,14 +194,14 @@ namespace BookStoreMVC.Controllers
             {
                 _context.Review.Remove(review);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ReviewExists(int id)
         {
-          return (_context.Review?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Review?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

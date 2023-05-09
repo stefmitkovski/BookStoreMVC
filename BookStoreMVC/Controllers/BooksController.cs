@@ -1,7 +1,9 @@
-﻿using BookStoreMVC.Data;
+﻿using BookStoreMVC.Areas.Identity.Data;
+using BookStoreMVC.Data;
 using BookStoreMVC.Models;
 using BookStoreMVC.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
@@ -15,11 +17,13 @@ namespace BookStoreMVC.Controllers
     {
         private readonly BookStoreMVCContext _context;
         private readonly IHostingEnvironment webHostEnvironment;
+        private readonly UserManager<BookStoreMVCUser> _userManager;
 
-        public BooksController(BookStoreMVCContext context, IHostingEnvironment hostEnvironment)
+        public BooksController(BookStoreMVCContext context, IHostingEnvironment hostEnvironment, UserManager<BookStoreMVCUser> userManager)
         {
             _context = context;
             webHostEnvironment = hostEnvironment;
+            _userManager = userManager;
         }
 
         // GET: Books
@@ -66,7 +70,28 @@ namespace BookStoreMVC.Controllers
                 return NotFound();
             }
 
-            return View(book);
+            // Do you own this book ?
+            string purchesed = "No";
+            var usr = await _userManager.GetUserAsync(HttpContext.User);
+            if (usr != null)
+            {
+                var do_you_own_it = await _context.userBooks.Where(b => b.BookId == id && b.AppUser == usr.Email).FirstOrDefaultAsync();
+                if (do_you_own_it != null)
+                {
+                    purchesed = "Yes";
+                }
+            }
+            // Get the reviews of this book
+            var all_review = await _context.Review.Where(b => b.BookId == id).ToListAsync();
+
+            var bookDetailsVM = new BookDetails
+            {
+                Book = book,
+                Reviews = all_review,
+                Purchesed = purchesed
+            };
+
+            return View(bookDetailsVM);
         }
 
         // GET: Books/Create
@@ -277,6 +302,43 @@ namespace BookStoreMVC.Controllers
             }
             return null;
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> Buy(int id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var book = await _context.Book
+                .Include(b => b.Author)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+
+            var usr = await _userManager.GetUserAsync(HttpContext.User);
+            if (usr == null)
+            {
+                return NotFound();
+            }
+
+            var ownAlready = await _context.userBooks.Where(s => s.AppUser == usr.Email && s.BookId == id).FirstOrDefaultAsync();
+            if (ownAlready != null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            _context.userBooks.Add(new UserBooks { AppUser = usr.Email, BookId = id });
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
 
         private bool BookExists(int id)
         {

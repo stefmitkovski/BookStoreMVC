@@ -12,7 +12,7 @@
         <a asp-action="Create">Add a new book</a>
     </p>
 }
-<form asp-asp-controller="Books" asp-action="Index" method="get">
+<form asp-controller="Books" asp-action="Index" method="get">
     <p>
         <select asp-for="BookGenre" asp-items="Model.Genre">
             <option value="">All</option>
@@ -26,23 +26,23 @@
     <thead>
         <tr>
             <th>
+                @Html.DisplayNameFor(model => model.Books[0].FrontPage)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Books[0].Title)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Books[0].NumPages)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Books[0].Description)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Books[0].Publisher)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Books[0].FrontPage)
-            </th>
+            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
             <th>
                 @Html.DisplayNameFor(model => model.Books[0].DownloadUrl)
             </th>
+            }
             <th>
                 @Html.DisplayNameFor(model => model.Books[0].Author)
             </th>
@@ -56,23 +56,23 @@
 @foreach (var item in Model.Books) {
         <tr>
             <td>
+                <img src="~/images/@Html.DisplayFor(modelItem => item.FrontPage)" height="500px" width="300px">
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.NumPages)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Publisher)
             </td>
-            <td>
-                    <img src="~/images/@Html.DisplayFor(modelItem => item.FrontPage)" height="500px" width="300px">
-            </td>
-            <td>
-                <a href="~/pdfs/@Html.DisplayFor(modelItem => item.DownloadUrl)">Download</a>
-            </td>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <td>
+                        <a href="~/pdfs/@Html.DisplayFor(modelItem => item.DownloadUrl)">Download</a>
+                    </td>
+                }
             <td>
                 @Html.DisplayFor(modelItem => item.Author.FullName)
             </td>
@@ -106,7 +106,9 @@
                 }
                     @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
                 {
-                    <a asp-action="Buy" asp-route-id="@item.Id">Buy</a><p>|</p>
+                        <form method="post" asp-controller="Books" asp-action="Buy" asp-route-id="@item.Id">
+                            <button type="submit" class="btn btn-link">Buy</button>|
+                        </form>
                 }
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a>
                 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))

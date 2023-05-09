@@ -18,7 +18,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="AppUser" class="control-label"></label>
-                <input asp-for="AppUser" class="form-control" />
+                <input asp-for="AppUser" class="form-control" value="@(ViewBag.User)" readonly/>
                 <span asp-validation-for="AppUser" class="text-danger"></span>
             </div>
             <div class="form-group">
