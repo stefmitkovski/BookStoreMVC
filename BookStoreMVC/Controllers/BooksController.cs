@@ -128,7 +128,7 @@ namespace BookStoreMVC.Controllers
             CreateBookGenreViewModel viewModel = new CreateBookGenreViewModel
             {
                 Book = new Book(),
-                GenreList = new MultiSelectList(_context.Genre.AsEnumerable().OrderBy(s => s.GenreName), "Id", "GenreName"),
+                GenreList = new MultiSelectList(_context.Genre.AsEnumerable(), "Id", "GenreName"),
                 SelectedGenres = Enumerable.Empty<int>()
             };
             ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FullName");
